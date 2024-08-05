@@ -3,9 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>事件绑定</title>
 </head>
 <body>
-    <br>
+    <input type="button" id="btn1" value="event1" onclick="on()">
+    <input type="button" id="btn2" value="event2">
 </body>
+
+<script>
+    function on() {
+        alert("has been clicked");
+    }
+
+    document.getElementById("btn2").onclick = function() {
+        alert("has been clicked");
+    };
+
+</script>
 </html>
