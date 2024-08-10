@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>兴趣交流平台</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+        .interest-list {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .interest-item {
+            background: #e9e9e9;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input, textarea {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background: #333;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #555;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .post {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .post h3 {
+            margin-top: 0;
+        }
+        @media (max-width: 600px) {
+            .interest-list {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>兴趣交流平台</h1>
+        <p>欢迎来到我们的兴趣交流平台！在这里，你可以找到志同道合的朋友，分享你的兴趣爱好。</p>
+        
+        <button id="registerBtn">注册</button>
+        <button id="postBtn">发帖</button>
+        
+        <h2>热门兴趣</h2>
+        <div class="interest-list">
+            <div class="interest-item">阅读</div>
+            <div class="interest-item">旅行</div>
+            <div class="interest-item">音乐</div>
+            <div class="interest-item">烹饪</div>
+            <div class="interest-item">摄影</div>
+        </div>
+        
+        <h2>最新帖子</h2>
+        <div id="posts"></div>
+        
+        <h2>联系我们</h2>
+        <form id="contactForm">
+            <input type="text" placeholder="你的名字" required>
+            <input type="email" placeholder="你的邮箱" required>
+            <textarea placeholder="你想分享的兴趣爱好..." required></textarea>
+            <button type="submit">提交</button>
+        </form>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>用户注册</h2>
+            <form id="registerForm">
+                <input type="text" placeholder="用户名" required>
+                <input type="email" placeholder="邮箱" required>
+                <input type="password" placeholder="密码" required>
+                <input type="password" placeholder="确认密码" required>
+                <button type="submit">注册</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="postModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>发布新帖子</h2>
+            <form id="postForm">
+                <input type="text" id="postTitle" placeholder="标题" required>
+                <textarea id="postContent" placeholder="内容" required></textarea>
+                <button type="submit">发布</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 获取模态框
+        var registerModal = document.getElementById("registerModal");
+        var postModal = document.getElementById("postModal");
+
+        // 获取打开模态框的按钮
+        var registerBtn = document.getElementById("registerBtn");
+        var postBtn = document.getElementById("postBtn");
+
+        // 获取 <span> 元素，用于关闭模态框
+        var spans = document.getElementsByClassName("close");
+
+        // 点击按钮打开模态框 
+        registerBtn.onclick = function() {
+            registerModal.style.display = "block";
+        }
+        postBtn.onclick = function() {
+            postModal.style.display = "block";
+        }
+
+        // 点击 <span> (x), 关闭模态框
+        for (var i = 0; i < spans.length; i++) {
+            spans[i].onclick = function() {
+                registerModal.style.display = "none";
+                postModal.style.display = "none";
+            }
+        }
+
+        // 在用户点击模态框外部时，关闭它
+        window.onclick = function(event) {
+            if (event.target == registerModal) {
+                registerModal.style.display = "none";
+            }
+            if (event.target == postModal) {
+                postModal.style.display = "none";
+            }
+        }
+
+        // 处理注册表单提交
+        document.getElementById("registerForm").onsubmit = function(e) {
+            e.preventDefault();
+            alert("注册功能需要后端支持。这里只是一个前端示例。");
+            registerModal.style.display = "none";
+        }
+
+        // 处理联系表单提交
+        document.getElementById("contactForm").onsubmit = function(e) {
+            e.preventDefault();
+            alert("表单提交功能需要后端支持。这里只是一个前端示例。");
+        }
+
+        // 处理发帖表单提交
+        document.getElementById("postForm").onsubmit = function(e) {
+            e.preventDefault();
+            var title = document.getElementById("postTitle").value;
+            var content = document.getElementById("postContent").value;
+            addPost(title, content);
+            postModal.style.display = "none";
+            document.getElementById("postForm").reset();
+        }
+
+        // 添加新帖子到页面
+        function addPost(title, content) {
+            var postsDiv = document.getElementById("posts");
+            var postDiv = document.createElement("div");
+            postDiv.className = "post";
+            postDiv.innerHTML = `
+                <h3>${title}</h3>
+                <p>${content}</p>
+            `;
+            postsDiv.prepend(postDiv);
+        }
+    </script>
+</body>
+</html>
