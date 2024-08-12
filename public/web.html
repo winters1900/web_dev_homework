@@ -103,16 +103,26 @@
                 flex-direction: column;
             }
         }
+
+        .button-group {
+            margin-bottom: 20px;
+        }
+        .button-group button {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>兴趣交流平台</h1>
         <p>欢迎来到我们的兴趣交流平台！在这里，你可以找到志同道合的朋友，分享你的兴趣爱好。</p>
-        
-        <button id="registerBtn">注册</button>
-        <button id="postBtn">发帖</button>
-        
+
+        <div class="button-group">
+            <button id="loginBtn">登录</button>
+            <button id="registerBtn">注册</button>
+            <button id="postBtn">发帖</button>
+        </div>
+
         <h2>热门兴趣</h2>
         <div class="interest-list">
             <div class="interest-item">阅读</div>
@@ -132,6 +142,18 @@
             <textarea placeholder="你想分享的兴趣爱好..." required></textarea>
             <button type="submit">提交</button>
         </form>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>用户登录</h2>
+            <form id="loginForm">
+                <input type="text" placeholder="用户名/邮箱" required>
+                <input type="password" placeholder="密码" required>
+                <button type="submit">登录</button>
+            </form>
+        </div>
     </div>
 
     <div id="registerModal" class="modal">
@@ -162,10 +184,12 @@
 
     <script>
         // 获取模态框
+        var loginModal = document.getElementById("loginModal");
         var registerModal = document.getElementById("registerModal");
         var postModal = document.getElementById("postModal");
 
         // 获取打开模态框的按钮
+        var loginBtn = document.getElementById("loginBtn");
         var registerBtn = document.getElementById("registerBtn");
         var postBtn = document.getElementById("postBtn");
 
@@ -173,6 +197,9 @@
         var spans = document.getElementsByClassName("close");
 
         // 点击按钮打开模态框 
+        loginBtn.onclick = function() {
+            loginModal.style.display = "block";
+        }
         registerBtn.onclick = function() {
             registerModal.style.display = "block";
         }
@@ -183,6 +210,7 @@
         // 点击 <span> (x), 关闭模态框
         for (var i = 0; i < spans.length; i++) {
             spans[i].onclick = function() {
+                loginModal.style.display = "none";
                 registerModal.style.display = "none";
                 postModal.style.display = "none";
             }
@@ -190,6 +218,9 @@
 
         // 在用户点击模态框外部时，关闭它
         window.onclick = function(event) {
+            if (event.target == loginModal) {
+                loginModal.style.display = "none";
+            }
             if (event.target == registerModal) {
                 registerModal.style.display = "none";
             }
@@ -198,39 +229,28 @@
             }
         }
 
-        // 处理注册表单提交
+        // 处理表单提交
+        document.getElementById("loginForm").onsubmit = function(e) {
+            e.preventDefault();
+            alert("登录成功！");
+            loginModal.style.display = "none";
+        }
+
         document.getElementById("registerForm").onsubmit = function(e) {
             e.preventDefault();
             alert("注册成功！");
             registerModal.style.display = "none";
         }
 
-        // 处理联系表单提交
-        document.getElementById("contactForm").onsubmit = function(e) {
-            e.preventDefault();
-            alert("表单提交成功！");
-        }
-
-        // 处理发帖表单提交
         document.getElementById("postForm").onsubmit = function(e) {
             e.preventDefault();
-            var title = document.getElementById("postTitle").value;
-            var content = document.getElementById("postContent").value;
-            addPost(title, content);
+            alert("发布成功！");
             postModal.style.display = "none";
-            document.getElementById("postForm").reset();
         }
 
-        // 添加新帖子到页面
-        function addPost(title, content) {
-            var postsDiv = document.getElementById("posts");
-            var postDiv = document.createElement("div");
-            postDiv.className = "post";
-            postDiv.innerHTML = `
-                <h3>${title}</h3>
-                <p>${content}</p>
-            `;
-            postsDiv.prepend(postDiv);
+        document.getElementById("contactForm").onsubmit = function(e) {
+            e.preventDefault();
+            alert("提交成功！");
         }
     </script>
 </body>
