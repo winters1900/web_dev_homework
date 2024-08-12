@@ -110,6 +110,22 @@
         .button-group button {
             margin-right: 10px;
         }
+
+        .button-group {
+            margin-bottom: 20px;
+        }
+        .button-group button {
+            margin-right: 10px;
+        }
+        .file-input {
+            margin-bottom: 10px;
+        }
+        #imagePreview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -182,6 +198,24 @@
         </div>
     </div>
 
+    <div id="postModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>发布新帖子</h2>
+            <form id="postForm">
+                <input type="text" placeholder="标题" required>
+                <textarea placeholder="内容" required></textarea>
+                <div class="file-input">
+                    <label for="imageUpload">添加图片：</label>
+                    <input type="file" id="imageUpload" accept="image/*">
+                </div>
+                <img id="imagePreview" src="#" alt="图片预览">
+                <button type="submit">发布</button>
+            </form>
+        </div>
+    </div>
+
+
     <script>
         // 获取模态框
         var loginModal = document.getElementById("loginModal");
@@ -252,6 +286,40 @@
             e.preventDefault();
             alert("提交成功！");
         }
+
+        var imageUpload = document.getElementById('imageUpload');
+        var imagePreview = document.getElementById('imagePreview');
+
+        imageUpload.addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById("postForm").onsubmit = function(e) {
+            e.preventDefault();
+            var title = this.elements[0].value;
+            var content = this.elements[1].value;
+            var imageFile = imageUpload.files[0];
+            
+
+            console.log("标题:", title);
+            console.log("内容:", content);
+            console.log("图片:", imageFile);
+
+            alert("发布成功！");
+            postModal.style.display = "none";
+            
+            this.reset();
+            imagePreview.style.display = 'none';
+        }
+
     </script>
 </body>
 </html>
