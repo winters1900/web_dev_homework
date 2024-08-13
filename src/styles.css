@@ -1,0 +1,33 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.background {
+    background-image: url('../public/lights.jpeg'); /* 替换为你的图片URL */
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+    position: relative;
+}
+
+.background::before {
+    content: '';
+    background: inherit;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    filter: opacity(50%); /* 设置透明度 */
+}
+
+.background h1, .background p {
+    position: relative;
+    z-index: 1;
+    color: white; /* 根据需要调整文字颜色 */
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
