@@ -2,9 +2,10 @@
   <div id="app">
     <header>
       <h1>兴趣交流平台</h1>
+      <p>欢迎来到我们的兴趣交流平台！在这里，你可以找到志同道合的朋友，分享你的兴趣爱好。</p>
       <nav>
-        <button @click="showRegisterForm" v-if="!isLoggedIn">注册</button>
         <button @click="showLoginForm" v-if="!isLoggedIn">登录</button>
+        <button @click="showRegisterForm" v-if="!isLoggedIn">注册</button>
         <button @click="showNewPostForm" v-if="isLoggedIn">发帖</button>
         <button @click="logout" v-if="isLoggedIn">登出</button>
       </nav>
@@ -30,25 +31,25 @@
       <p>联系我们</p>
     </footer>
     
-    <!-- 注册表单 -->
-    <div v-if="showRegister" class="modal">
-      <div class="modal-content">
-        <h2>注册</h2>
-        <input v-model="registerUsername" placeholder="用户名">
-        <input v-model="registerPassword" type="password" placeholder="密码">
-        <button @click="register">注册</button>
-        <button @click="showRegister = false">关闭</button>
-      </div>
-    </div>
-
     <!-- 登录表单 -->
     <div v-if="showLogin" class="modal">
       <div class="modal-content">
-        <h2>登录</h2>
+        <h2>用户登录</h2>
         <input v-model="loginUsername" placeholder="用户名">
         <input v-model="loginPassword" type="password" placeholder="密码">
         <button @click="login">登录</button>
         <button @click="showLogin = false">关闭</button>
+      </div>
+    </div>
+
+    <!-- 注册表单 -->
+    <div v-if="showRegister" class="modal">
+      <div class="modal-content">
+        <h2>用户注册</h2>
+        <input v-model="registerUsername" placeholder="用户名">
+        <input v-model="registerPassword" type="password" placeholder="密码">
+        <button @click="register">注册</button>
+        <button @click="showRegister = false">关闭</button>
       </div>
     </div>
 
@@ -58,6 +59,12 @@
         <h2>发布新帖子</h2>
         <input v-model="newPostTitle" placeholder="标题">
         <textarea v-model="newPostContent" placeholder="内容"></textarea>
+        <div>
+          <label for="file-upload" class="custom-file-upload">
+            添加图片：
+          </label>
+          <input id="file-upload" type="file" @change="handleFileUpload">
+        </div>
         <button @click="createPost">发布</button>
         <button @click="showNewPost = false">关闭</button>
       </div>
@@ -83,15 +90,16 @@ export default {
       loginUsername: '',
       loginPassword: '',
       newPostTitle: '',
-      newPostContent: ''
+      newPostContent: '',
+      selectedFile: null
     }
   },
   methods: {
-    showRegisterForm() {
-      this.showRegister = true;
-    },
     showLoginForm() {
       this.showLogin = true;
+    },
+    showRegisterForm() {
+      this.showRegister = true;
     },
     showNewPostForm() {
       this.showNewPost = true;
@@ -132,13 +140,23 @@ export default {
       this.isLoggedIn = false;
       localStorage.removeItem('token');
     },
+    handleFileUpload(event) {
+      this.selectedFile = event.target.files[0];
+    },
     async createPost() {
       try {
-        const response = await axios.post('http://localhost:3000/api/posts', {
-          title: this.newPostTitle,
-          content: this.newPostContent
-        }, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        const formData = new FormData();
+        formData.append('title', this.newPostTitle);
+        formData.append('content', this.newPostContent);
+        if (this.selectedFile) {
+          formData.append('image', this.selectedFile);
+        }
+
+        const response = await axios.post('http://localhost:3000/api/posts', formData, {
+          headers: { 
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data'
+          }
         });
         alert(response.data.message);
         this.showNewPost = false;
@@ -194,5 +212,42 @@ export default {
   padding: 20px;
   border: 1px solid #888;
   width: 80%;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+nav button {
+  margin: 0 5px;
+  padding: 5px 10px;
+}
+
+input, textarea {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+button {
+  margin: 5px;
+  padding: 5px 10px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 5px;
 }
 </style>
